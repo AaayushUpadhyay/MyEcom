@@ -1,0 +1,30 @@
+*
+{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+.mycard
+{
+    border: none !important;
+    border-top: 5px solid rgb(176,106,252) !important;
+    background: 	#5bc0de !important;
+}
+.main_div
+{
+    height: 100vh;
+}
+a{
+    text-decoration: none;
+}
+p a
+{
+text-decoration: none;
+color: white;
+}
+
+.back
+{
+    margin-left: 5rem;
+    margin-right: 5rem;
+}

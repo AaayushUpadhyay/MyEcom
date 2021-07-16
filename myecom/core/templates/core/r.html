@@ -1,0 +1,23 @@
+{% load static %}
+{% if payment %}
+<div class="container col-6 mx-auto mt-3">
+<form action="/success/" method="POST">
+  <script
+      src="https://checkout.razorpay.com/v1/checkout.js"
+      data-key="rzp_test_daHPr4QhX1TJ4V" 
+      data-amount="{{payment.amount}}" 
+      data-currency="INR"
+      data-order_id="{{payment.id}}"
+      data-buttontext="Pay with Razorpay"
+      data-name="MY ECOM"
+      data-description="Thanks for buying from our store."
+      data-image=""
+      data-prefill.name="Your Name"
+      data-prefill.email="yourmail@example.com"
+      data-theme.color="#F37254"
+  ></script>
+  <input type="hidden" custom="Hidden Element" name="hidden" class="btn btn-primary">
+  <input type="hidden"  name="oid" value="{{order_id}}">
+  </form>
+</div>
+{% endif %}

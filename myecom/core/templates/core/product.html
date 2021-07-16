@@ -1,0 +1,92 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+    
+{% block content %}
+      <div class="container">
+          <div class="row mt-5">
+              <div class="col-lg-6 col-sm-12 shadow">
+                  <img src="{{product.0.i.image.url}}" alt="" class="img-fluid">
+              </div>
+              <div class="col-lg-6 col-sm-12 px-4 py-4">
+                  {% csrf_token %}
+                  <h2 class="text-center">{{product.0.i.name}}</h2>
+                  <p>{{product.0.i.description}}</p>
+                  <p>${{product.0.i.price}}</p>
+                  {% if product.0.iqty == None  %}
+                  <button href="#" class="btn btn-info atc" id="{{product.0.i.id}}">Add to Cart <i class="fas fa-shopping-cart"></i></button>
+                  {% elif product.0.iqty == True %}
+                  <button href="#" class="btn btn-info" id="{{product.i.id}}">Added  <i class='fas fa-check'></i></button>
+                  {% elif product.0.iqty == False %}
+                  <button href="#" class="btn btn-info atc" id="{{product.0.i.id}}">Add to Cart <i class="fas fa-shopping-cart"></i></button>
+                  {% endif %}
+              </div>
+          </div>
+      </div>
+
+
+
+
+
+
+      {% block js %}
+      <script>
+         $('.atc').click(function(e){
+             console.log(e.target);
+             elem=document.getElementById(e.target.id)
+             elem.outerHTML='<button href="#" class="btn btn-info" id="1">Added to Cart <i class="fas fa-check" aria-hidden="true"></i></button>'
+             
+             var data = {
+            'itemId':e.target.id,
+            'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
+        }
+
+
+        $.ajax(
+             {
+                type:'POST',
+                url:'/addtocart/',
+                data:data,
+                encode:true
+             }
+         )
+         .done(function(data)
+         {
+            pdata=JSON.parse(data);
+            qty=document.getElementById('cq');
+            qty.innerHTML=pdata[0].cq;
+            
+
+            
+             
+             
+             
+         })
+          
+
+
+
+
+             
+         })
+        
+      </script>
+      {% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% endblock %}
+
+
+  

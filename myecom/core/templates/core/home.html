@@ -1,0 +1,84 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block content %}
+      <div class="container">
+          
+
+          <section class="mt-5 px-5">
+              <div class="row mt-5">
+                {% for item in items %}
+                  <div class="col-lg-4 my-2 col-md-6">
+                    <div class="card" style="width: 18rem;">
+                        <img src="{{item.i.image.url}}" class="card-img-top img-fluid" alt="...">
+                        <div class="card-body">
+                            {% csrf_token %}
+                          <h5 class="card-title">{{item.i.name}}</h5>
+                          <p class="card-text">${{item.i.price}}</p>
+                          {% if item.iqty == None  %}
+                          <button href="#" class="btn btn-info atc" id="{{item.i.id}}">Add to Cart <i class="fas fa-shopping-cart"></i></button>
+                          {% elif item.iqty == True %}
+                          <button href="#" class="btn btn-info" id="{{item.i.id}}">Added  <i class='fas fa-check'></i></button>
+                          {% elif item.iqty == False %}
+                          <button href="#" class="btn btn-info atc" id="{{item.i.id}}">Add to Cart <i class="fas fa-shopping-cart"></i></button>
+                          {% endif %}
+                          <a href="{% url 'product' item.i.id %}" class="btn btn-info" >View Details</a>
+
+
+                         
+                        </div>
+                      </div>
+                  </div>
+                  {% endfor %}
+                  
+              </div>
+          </section>
+      </div>
+      
+      {% block js %}
+      <script>
+         $('.atc').click(function(e){
+             console.log(e.target);
+             elem=document.getElementById(e.target.id)
+             elem.outerHTML='<button href="#" class="btn btn-info" id="1">Added <i class="fas fa-check" aria-hidden="true"></i></button>'
+             
+             var data = {
+            'itemId':e.target.id,
+            'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
+        }
+
+
+        $.ajax(
+             {
+                type:'POST',
+                url:'/addtocart/',
+                data:data,
+                encode:true
+             }
+         )
+         .done(function(data)
+         {
+            pdata=JSON.parse(data);
+            qty=document.getElementById('cq');
+            qty.innerHTML=pdata[0].cq;
+            
+
+            
+             
+             
+             
+         })
+          
+
+
+
+
+             
+         })
+        
+      </script>
+      {% endblock %}
+
+
+
+{% endblock %}
+

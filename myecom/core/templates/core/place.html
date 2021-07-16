@@ -1,0 +1,34 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block content %} 
+<div class="container" id="mydiv">
+      <div class="row my-5 shadow-lg py-5">
+          <div class="col-md-8 col-11 mx-auto">
+              <div class="row gt-3 mx-auto">
+                  <div class="col-md-8 col-11 mx-auto">
+                    <p class="display-6 lead mb-4">You have to pay ${{total|add:"40"}}{{context}}</p>
+                   
+                    <input type="hidden" name="id" value="{{id}}">
+                    <input type="hidden" name="csrfmiddlewaretoken" value="{{csrf_token}}">
+                    <input type="hidden" name="oid" value="{{order_id}}">
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-info" type="button" id="pay">Pay</button>
+                        <button class="btn btn-danger" type="button" id="pay">Cancel your order</button>
+                        
+                      </div>
+                   
+                  </div>
+
+              </div>
+          </div>
+      </div>
+</div>
+
+
+{% endif %}
+
+
+
+
+
+{% endblock %}

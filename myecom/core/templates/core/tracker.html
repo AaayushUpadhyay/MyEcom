@@ -1,0 +1,97 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block content %}
+<div class="container">
+    <div class="col my-4">
+        <h2> Enter Your Order Id and Email address to track your order </h2>
+        <form id="trackerForm" method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+              <label for="exampleInputEmail1" class="form-label">Email address</label>
+              <input type="email" class="form-control" id="email" name="email" aria-describedby="emailHelp">
+            </div>
+            <div class="mb-3">
+              <label for="exampleInputPassword1" class="form-label">Order Id</label>
+              <input type="text" class="form-control" id="oid" name="oid">
+            </div>
+            <button type="submit" class="btn btn-primary">Track Order</button>
+          </form>
+    </div>
+    <div class="col my-4">
+        <h2>Your Order Status :</h2>
+        <div class="my-4">
+            <ul class="list-group" id="items">
+                Enter your order Id and Email and click Track Order to find details about your order!
+            </ul>
+        </div>
+       
+    </div>
+</div>
+
+{% block js %}
+<script>
+    $('#trackerForm').submit(function(event){
+    event.preventDefault();
+    $('#items').empty();
+    var formData = {
+        'oid': $('input[name=oid]').val(),
+        'email': $('input[name=email]').val(),
+        'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
+    };
+    $.ajax({
+            type: 'POST',
+            url: '/tracker/',
+            data: formData,
+            encode: true
+        })
+        .done(function(data){
+            console.log(data);
+            
+            updates = JSON.parse(data);
+            console.log(updates);
+            if (updates.length > 0) {
+                for (i = 0; i < updates.length; i++) {
+                    let text = updates[i]['text'];
+                    let time = updates[i]['time'];
+                    console.log(time);
+                    
+                    mystr = `<li class="list-group-item d-flex justify-content-between align-items-center">
+                    ${text}
+                    <span class="badge rounded-pill bg-primary">${time}</span>
+                </li>`
+                    $('#items').append(mystr);
+                }
+            } else {
+            	mystr = `<li class="list-group-item d-flex justify-content-between align-items-center">
+                    Sorry, We are not able to fetch this order id and email. Make sure to type correct order Id and email</li>`
+            	$('#items').append(mystr);
+            }
+            
+        })
+    
+   
+
+ });
+</script>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% endblock %}

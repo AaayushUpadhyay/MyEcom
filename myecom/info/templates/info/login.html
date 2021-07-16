@@ -1,0 +1,33 @@
+{% extends 'core/base.html' %}
+{% load static %}
+{% block content %}
+<div class="container" >
+    <div class="row">
+        <div class="col-md-10 col-11 mx-auto" >
+            <div class="row mt-4 gx-3" >
+                <div class="col-md-6 col-11 mx-auto my-5 " >
+                    <p class="text-center mb-4 lead">Don't have an account ? <a href="{% url 'register' %}" style="color: rgb(0, 110, 255);text-decoration: none;">Register</a></p>
+                    <form method="POST" action="{% url 'login' %}">
+                      {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="userName" class="form-label">Username</label>
+                            <div class="input-group">
+                                <span class="input-group-text">@</span>
+                                <input type="text" class="form-control" id="username" name="username" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                          <label  class="form-label">Password</label>
+                          <input type="password" class="form-control" id="password" name="password" required>
+                          <a href="#" style="text-decoration: none;" class="my-2"><p>Forgot Password ?</p></a>
+                        </div>
+                        <button type="submit"  class="btn btn-primary " id="mybtn">Login</button>   
+                      </form>
+                      
+                </div>
+             </div>
+        </div>
+  
+    </div>
+  </div>
+{% endblock %}

@@ -1,0 +1,254 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+    
+{% block content %}
+
+<div class="container-fluid">
+{% if cart == False %}
+<div class="alert alert-danger mt-5" role="alert">
+    <h4 class="alert-heading">Your cart is empty. Add items to your cart.</h4>
+  </div>
+{% else %}
+
+
+
+
+
+    <div class="row" id="myrow">
+        <div class="col-md-10 col-11 mx-auto">
+            <div class="row mt-4 gx-3">
+                <!-- left side div -->
+                <div class="col-md-12 col-lg-8 col-11 mx-auto main_cart mb-lg-0 mb-5">
+                    {% for item in items %}
+                    <div class="card p-4 shadow" id="I{{item.id}}">
+                        <div class="row">
+                            <!-- image div -->
+                            <div class="col-md-5 col-11 mx-auto bg-light shadow d-flex justify-content-center align-items-center product_img">
+                                <img src="{{item.item.image.url}}" alt="" class="img-fluid">
+                            </div>
+                            <!-- cart product details -->
+                            <div class="col-md-7 col-11 mx-auto px-4 mt-2">
+                                <div class="row">
+                                    <!-- productname -->
+                                    {% csrf_token %}
+                                    <div class="col-6 cart-title">
+                                        <h4 class="mb-4 product_name">{{item.item.name}}</h4>
+                                        <p class="mb-2">{{item.item.description}}</p>
+                                        <div id="my{{item.id}}">
+                                        </div>
+                                    </div>
+                                    <!-- quantity inc dec -->
+                                    <div class="col-6" id="qtytotal">
+                                        <ul class="pagination justify-content-end">
+                                            <button class="btn page-item inc" id="p{{item.id}}"><i class="fas fa-plus"></i></button>
+                                            <span id="inc{{item.id}}">{{item.qty}}</span>
+                                            <button class=" btn page-item dec" id="m{{item.id}}"><i class="fas fa-minus"></i></button>
+                                          </ul>
+                                    </div>
+                                </div>
+                                <!-- remover move and price -->
+                                <div class="row">
+                                    <div class="col-8 d-flex justify-content-between">
+                                        <a class="btn remItem" href="{% url 'del' item.id %}" id={{item.id}}><i class="fas fa-trash-alt"></i></a>
+                                    </div>
+                                    <div class="col-4 d-flex justify-content-end">
+                                        <h3>$<span id="total{{item.id}}">{{item.total}}.00</span></h3>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                    <!-- second product -->
+
+
+                   
+
+
+
+
+
+
+
+
+
+                </div>
+
+                <div class="col-lg-4 col-md-12 col-11 mx-auto mt-lg-0 mt-md-5">
+                    <div class="p-3 shadow bg-white">
+                        <h2 class="mb-5">Total Amount</h2>
+                        <div class="class d-flex justify-content-between">
+                            <p>Product amount</p>
+                            <p>$<span id="total">{{sum}}</span></p>
+
+                        </div>
+                        <div class="class d-flex justify-content-between">
+                            <p>Shipping Charge</p>
+                            <p>$<span>40.00</span></p>
+
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between font-weight-bold">
+                            <p>Total amount</p>
+                            <p>$<span id="ts">{{sum|add:"40"}}</span></p>
+                        </div>
+                        <a class="btn btn-info text-uppercase" href="{% url 'checkout' %}">Checkout</a>
+                    </div>
+
+                </div>
+
+
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endif %}
+
+
+
+{% block js %}
+<script>
+   $('.inc').click(function(e)
+   {
+       var id=e.currentTarget.id;
+       console.log(id);
+       
+    var data = {
+            'ItemInCartId':id.slice(1,),
+            'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
+        };
+        console.log(data);
+        
+        $.ajax(
+            {
+                type:'POST',
+                url:'/inc/',
+                data:data,
+                encode:true
+
+            }
+        )
+        .done(function(data){
+            // [{"in_stock": true, "iic_qty": 3, "iic_total": 600, "sum": 700}]
+           
+            
+            console.log(data);
+            pdata=JSON.parse(data);
+console.log(pdata);
+
+            in_stock=pdata[0]['in_stock']
+            iic_qty=pdata[0]['iic_qty']
+            iic_total=pdata[0]['iic_total']
+            sum=pdata[0]['sum']
+            added_all=pdata[0]['added_all']
+
+            if(in_stock==true){
+                document.getElementById('my'+id.slice(1,)).innerHTML='<span class="badge bg-info my-3">You can add more.</span>';
+                document.getElementById("p"+id.slice(1,)).classList.remove('disabled')
+            }
+            if(added_all==true){
+            document.getElementById('my'+id.slice(1,)).innerHTML='<span class="badge bg-danger my-3"><p>You cannot add more.Come back after some time.<p></p></span>';
+            document.getElementById("p"+id.slice(1,)).classList.add('disabled')
+            
+            }
+                
+            
+
+
+            document.getElementById('inc'+id.slice(1,)).innerHTML=iic_qty;
+            document.getElementById('total'+id.slice(1,)).innerHTML=iic_total;
+            document.getElementById('total').innerHTML=sum;
+            document.getElementById('ts').innerHTML=sum+40;
+
+            
+        })
+        
+       
+   });
+
+// decreasing quantity
+$('.dec').click(function(e){
+    
+    var id=e.currentTarget.id;
+    var data = {
+            'ItemInCartId':id.slice(1,),
+            'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val()
+        };
+        $.ajax(
+            {
+                type:'POST',
+                url:'/dec/',
+                data:data,
+                encode:true
+
+            }
+        )
+        .done(function(data){
+            pdata=JSON.parse(data)
+            console.log(pdata);
+            // {iic_qty: 1, iic_total: 200, sum: 200, cart_qty: 1}
+
+            iic_qty=pdata[0]['iic_qty']
+            iic_total=pdata[0]['iic_total']
+            sum=pdata[0]['sum']
+            cart_qty=pdata[0]['cart_qty']
+            is_gone=pdata[0]['is_gone']
+            
+            if(cart_qty>0){
+                if(is_gone==false){
+                    document.getElementById('inc'+id.slice(1,)).innerHTML=iic_qty;
+            document.getElementById('total'+id.slice(1,)).innerHTML=iic_total;
+            document.getElementById('total').innerHTML=sum;
+            document.getElementById('ts').innerHTML=sum+40;
+            document.getElementById('cq').innerHTML=cart_qty;
+            document.getElementById('my'+id.slice(1,)).innerHTML='<span class="badge bg-info my-3">You can add more.</span>';
+            document.getElementById("p"+id.slice(1,)).classList.remove('disabled')
+
+                }
+                else{
+                    document.getElementById('I'+id.slice(1,)).remove()
+                }
+                
+
+            }
+            if(cart_qty==0){
+                document.getElementById('myrow').innerHTML=`<div class="alert alert-danger mt-5" role="alert">
+    <h4 class="alert-heading">Your cart is empty. Add items to your cart.</h4>
+  </div>`;
+  document.getElementById('cq').innerHTML=cart_qty;
+            }
+            
+        })
+    
+});
+
+
+</script>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% endblock %}
